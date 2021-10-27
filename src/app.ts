@@ -1,4 +1,5 @@
 import express from 'express';
+import '@controllers/CategoryController';
 
 const app = express();
 
