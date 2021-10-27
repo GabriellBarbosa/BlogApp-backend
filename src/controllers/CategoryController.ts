@@ -22,6 +22,18 @@ class CategoryController {
       });
     }
   }
+
+  listAll = async (req: Request, res: Response) => {
+    try {
+      const categories = await Category.find({})
+        .sort({ createdAt: 'desc' })
+        .exec();
+
+      return res.json(categories);
+    } catch (err) {
+      return res.status(500).json({ message: `Erro ao listar: ${err}` });
+    }
+  }
 }
 
 export { CategoryController };
