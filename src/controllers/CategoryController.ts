@@ -1,5 +1,5 @@
-import { Category } from "@models/Category";
 import { Request, Response } from "express";
+import { Category } from "@models/Category";
 
 class CategoryController {
   add = async (req: Request, res: Response) => {
@@ -14,7 +14,7 @@ class CategoryController {
       return res.status(400).json(errs);
 
     try {
-      const newCategory = await Category.create({ name, slug });
+      const newCategory = await new Category({ name, slug }).save();
       return res.json(newCategory);
     } catch (err) {
       return res.status(500).json({ 
