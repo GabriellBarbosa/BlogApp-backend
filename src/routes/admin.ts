@@ -13,4 +13,7 @@ routes.post('/categories/add', categoryController.add);
 // @desc Updates categories
 routes.put('/categories/update/:id', categoryController.update);
 
+// @desc Deletes a category
+routes.delete('/categories/delete/:id', categoryController.delete);
+
 export { routes };
