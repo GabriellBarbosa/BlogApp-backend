@@ -9,13 +9,13 @@ env.config();
 createConnection();
 const app = express();
 
-// Express config
+// @desc Express config
   app.use(express.json());
 
-// Routes
+// @desc Routes
   app.use('/admin', admin);
 
-// Handle app errors
+// @desc Handle app errors
   app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
     if(err instanceof AppError) {
       return res.status(err.statusCode).json({
