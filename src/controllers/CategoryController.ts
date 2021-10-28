@@ -25,6 +25,25 @@ class CategoryController {
     
     return res.json(categories);
   }
+
+  update = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { name, slug } = req.body;
+
+    const category = await Category.findOne({ _id: id }).exec();
+    
+    if (!name && !slug)
+      throw new AppError('Impossível atualizar');
+    if (name || name !== undefined)
+      category.name = name;
+    if (slug || slug !== undefined)
+      category.slug = slug;
+
+    category.updatedAt = new Date();
+    await category.save();
+
+    return res.json(category);
+  }
 }
 
 export { CategoryController };
