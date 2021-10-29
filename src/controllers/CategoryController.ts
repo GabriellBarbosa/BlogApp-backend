@@ -32,6 +32,8 @@ class CategoryController {
 
     const category = await Category.findOne({ _id: id }).exec();
     
+    if(!category)
+      throw new AppError('Categoria não encontrada', 404);
     if (!name && !slug)
       throw new AppError('Impossível atualizar');
     if (name || name !== undefined)

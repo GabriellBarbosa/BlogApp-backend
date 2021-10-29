@@ -17,12 +17,48 @@ class PostController {
     if (errs.length)
       throw new AppError(errs);
 
-    // if not category, returns a server error;
-    await Category.findOne({ _id: category }).exec();
+    const categoryExists = await Category.findOne({ _id: category }).exec();
+    if (!categoryExists) throw new AppError('Categoria inválida');
+
     const newPost = new Post({ content, slug, category });
     const post = await newPost.save();
     
     return res.json(post);
+  }
+
+  listAll = async (req: Request, res: Response) => {
+    const posts = await Post
+      .find()
+      .populate('category')
+      .sort({ createdAt: 'desc' });
+    
+    return res.json(posts);
+  }
+
+  update = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { content, slug, category } = req.body;
+
+    const post = await Post.findOne({ _id: id }).exec();
+
+    if (!post)
+      throw new AppError('Postagem não encontrada', 404);
+    if (!content && !slug && !category)
+      throw new AppError('Impossível atualizar');
+    if (content)
+      post.content = content;
+    if (slug)
+      post.slug = slug;
+    if (category) {
+      const categoryExists = await Category.findOne({ _id: category }).exec();
+      if (!categoryExists) throw new AppError('Categoria inválida');
+      post.category = category;
+    }
+
+    post.updatedAt = new Date();
+    const updatedPost = await post.save();
+
+    return res.json(updatedPost);
   }
 }
 
