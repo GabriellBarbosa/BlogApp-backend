@@ -7,15 +7,18 @@ interface Category {
   createdAt: Date;
 }
 
-const schema = new Schema<Category>(
-  {
-    name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, trim: true }
-  },
-  {
-    timestamps: true
+const schema = new Schema<Category>({
+  name: { 
+    type: String, 
+    required: true, 
+    trim: true
+   },
+  slug: { 
+    type: String, 
+    required: true, 
+    trim: true 
   }
-);
+}, { timestamps: true });
 
 const Category = model('categories', schema);
 
