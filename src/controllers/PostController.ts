@@ -38,7 +38,6 @@ class PostController {
   update = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { content, slug, category } = req.body;
-
     const post = await Post.findOne({ _id: id }).exec();
 
     if (!post)
@@ -59,6 +58,13 @@ class PostController {
     const updatedPost = await post.save();
 
     return res.json(updatedPost);
+  }
+
+  delete = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    await Post.remove({ _id: id }).exec();
+
+    return res.json({ message: 'Postagem removida' });
   }
 }
 
