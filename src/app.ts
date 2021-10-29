@@ -3,6 +3,7 @@ import 'express-async-errors';
 import env from 'dotenv';
 import { createConnection } from '@database/index';
 import { routes as admin } from '@routes/admin';
+import { routes as post } from '@routes/post';
 import { AppError } from '@errors/AppError';
 
 env.config();
@@ -14,6 +15,7 @@ const app = express();
 
 // @desc Routes
   app.use('/admin', admin);
+  app.use('/posts', post);
 
 // @desc Handle app errors
   app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
