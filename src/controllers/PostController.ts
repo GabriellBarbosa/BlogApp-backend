@@ -35,7 +35,7 @@ class PostController {
     return res.json(posts);
   }
 
-  update = async (req: Request, res: Response) => {
+  edit = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { content, slug, category } = req.body;
     const post = await Post.findOne({ _id: id }).exec();

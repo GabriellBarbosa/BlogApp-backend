@@ -11,7 +11,7 @@ routes.get('/', postController.listAll);
 routes.post('/add', postController.add);
 
 // @desc Updates a post
-routes.put('/update/:id', postController.update);
+routes.put('/edit/:id', postController.edit);
 
 // @desc Deletes a post
 routes.delete('/delete/:id', postController.delete);
