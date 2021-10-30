@@ -7,9 +7,9 @@ class CategoryController {
     let errs = [];
     const { name, slug } = req.body;
 
-    if (!name || name === undefined)
+    if (!String(name).trim() || name === undefined)
       errs.push({ field: 'name', message: 'Campo obrigatório' });
-    if (!slug || slug === undefined)
+    if (!String(slug).trim() || slug === undefined)
       errs.push({ field: 'slug', message: 'Campo obrigatório' });
     if (errs.length)
       throw new AppError(errs);
