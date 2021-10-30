@@ -21,7 +21,7 @@ const schema = new Schema<User>({
     trim: true
   },
   isAdmin: {
-    required: true,
+    type: Number,
     default: 0
   },
   password: {

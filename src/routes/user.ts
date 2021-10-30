@@ -1,9 +1,10 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
+import { UserController } from "@controllers/UserController";
 
 const routes = Router();
+const userController = new UserController();
 
-routes.get('/', (req: Request, res: Response) => {
-  res.json('Hello World');
-});
+// @ Creates a new user
+routes.post('/register', userController.createAccount);
 
 export { routes };
