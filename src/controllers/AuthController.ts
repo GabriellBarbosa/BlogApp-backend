@@ -3,7 +3,7 @@ import { User } from "@models/User";
 import { AppError } from "@errors/AppError";
 import bcrypt from 'bcrypt';
 
-class UserController {
+class AuthController {
   createAccount = async(req: Request, res: Response) => {
     const { email, userName, isAdmin, password } = req.body;
     let errs = [];
@@ -41,4 +41,4 @@ class UserController {
   }
 }
 
-export { UserController };
+export { AuthController };
