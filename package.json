@@ -4,12 +4,14 @@
   "description": "Awesome project build with express and mongodb",
   "main": "server.js",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "mongoose": "^6.0.12"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.13",
     "ts-node-dev": "^1.1.8",
     "tsconfig-paths": "^3.11.0",
