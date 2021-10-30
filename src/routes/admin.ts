@@ -10,8 +10,8 @@ routes.get('/categories/', categoryController.listAll);
 // @desc Saves a new category in MONGODB
 routes.post('/categories/add', categoryController.add);
 
-// @desc Updates categories
-routes.put('/categories/update/:id', categoryController.update);
+// @desc Edits a category
+routes.put('/categories/edit/:id', categoryController.edit);
 
 // @desc Deletes a category
 routes.delete('/categories/delete/:id', categoryController.delete);

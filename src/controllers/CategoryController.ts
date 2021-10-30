@@ -26,7 +26,7 @@ class CategoryController {
     return res.json(categories);
   }
 
-  update = async (req: Request, res: Response) => {
+  edit = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { name, slug } = req.body;
 
