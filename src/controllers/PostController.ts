@@ -8,11 +8,11 @@ class PostController {
     const { content, slug, category } = req.body;
     let errs = [];
 
-    if (!content || content === undefined)
+    if (!String(content).trim() || content === undefined)
       errs.push({ field: 'content', message: 'Campo obrigatório' });
-    if (!slug || slug === undefined)
+    if (!String(slug).trim() || slug === undefined)
       errs.push({ field: 'slug', message: 'Campo obrigatório' });
-    if (!category || category === undefined)
+    if (!String(category).trim() || category === undefined)
       errs.push({ field: 'category', message: 'Campo obrigatório' });
     if (errs.length)
       throw new AppError(errs);
