@@ -30,14 +30,37 @@ class AuthController {
     // hash password and saves the user
     const saltRounds = 10;
     bcrypt.genSalt(saltRounds, (err, salt) => {
+      if (err) throw new Error(err.message);
       bcrypt.hash(newUser.password, salt, async (err, hash) => {
         if (err) throw new Error(err.message);
+
         newUser.password = hash;
         const user = await newUser.save();
         user.password = undefined;
         return res.json(user);
       });
     });
+  }
+
+  authenticate = async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+    let errs = [];
+
+    if (!String(email).trim() || email === undefined)
+      errs.push({ field: 'email', message: 'Campo obrigatório' });
+    if (!String(password).trim() || password === undefined)
+      errs.push({ field: 'password', message: 'Campo obrigatório' });
+    if (errs.length) throw new AppError(errs);
+
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) throw new AppError('E-mail e/ou senha inválidos');
+
+    const passwordIsValid = await bcrypt.compare(password, user.password);
+    if (!passwordIsValid) throw new AppError('E-mail e/ou senha inválidos');
+
+    user.password = undefined;
+
+    return res.json(user);
   }
 }
 

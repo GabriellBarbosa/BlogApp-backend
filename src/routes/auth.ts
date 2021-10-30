@@ -7,7 +7,7 @@ const authController = new AuthController();
 // @desc Creates a new user
 routes.post('/register', authController.createAccount);
 
-// @desc Creates a new user
-routes.post('/authenticate', authController.createAccount);
+// @desc Handles users login
+routes.post('/authenticate', authController.authenticate);
 
 export { routes };
