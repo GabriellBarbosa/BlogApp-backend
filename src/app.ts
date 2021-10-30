@@ -4,6 +4,7 @@ import env from 'dotenv';
 import { createConnection } from '@database/index';
 import { routes as admin } from '@routes/admin';
 import { routes as post } from '@routes/post';
+import { routes as user } from '@routes/user';
 import { AppError } from '@errors/AppError';
 
 env.config();
@@ -16,6 +17,7 @@ app.use(express.json());
 // @desc Routes
 app.use('/admin', admin);
 app.use('/posts', post);
+app.use('/users', user);
 
 // @desc Handle app errors
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
