@@ -11,12 +11,14 @@ interface User {
 
 const schema = new Schema<User>({
   email: { 
-    type: String, 
-    required: true, 
+    type: String,
+    unique: true,
+    required: true,
     trim: true 
   },
   userName: {
     type: String,
+    unique: true,
     required: true,
     trim: true
   },
@@ -27,6 +29,7 @@ const schema = new Schema<User>({
   password: {
     type: String,
     required: true,
+    select: false,
     trim: true
   }
 }, { timestamps: true });

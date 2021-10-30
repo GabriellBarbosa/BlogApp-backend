@@ -32,13 +32,12 @@ class UserController {
     bcrypt.genSalt(saltRounds, (err, salt) => {
       bcrypt.hash(newUser.password, salt, async (err, hash) => {
         if (err) throw new Error(err.message);
-        console.log(hash);
         newUser.password = hash;
-        await newUser.save();
+        const user = await newUser.save();
+        user.password = undefined;
+        return res.json(user);
       });
     });
-
-    res.json({ message: 'Usuário criado com sucesso' });
   }
 }
 
