@@ -23,7 +23,8 @@
       "@models/*": ["./src/models/*"],
       "@routes/*": ["./src/routes/*"],
       "@database/*": ["./src/database/*"],
-      "@errors/*": ["./src/errors/*"]
+      "@errors/*": ["./src/errors/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
     }
   }
 }
