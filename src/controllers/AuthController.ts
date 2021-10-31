@@ -2,8 +2,17 @@ import { Request, Response } from "express";
 import { User } from "@models/User";
 import { AppError } from "@errors/AppError";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class AuthController {
+  private generateToken = (userId: string, expiresSeconds: number) => {
+    const token = jwt.sign({ id: userId }, process.env.SECRET_KEY, {
+      expiresIn: expiresSeconds
+    });
+    
+    return token;
+  }
+
   createAccount = async(req: Request, res: Response) => {
     const { email, userName, isAdmin, password } = req.body;
     let errs = [];
@@ -37,7 +46,9 @@ class AuthController {
         newUser.password = hash;
         const user = await newUser.save();
         user.password = undefined;
-        return res.json(user);
+
+        const token = this.generateToken(user.id, 86400);
+        return res.json({ user, token });
       });
     });
   }
@@ -52,15 +63,30 @@ class AuthController {
       errs.push({ field: 'password', message: 'Campo obrigatório' });
     if (errs.length) throw new AppError(errs);
 
-    const user = await User.findOne({ email }).select('+password');
-    if (!user) throw new AppError('E-mail e/ou senha inválidos');
+    const emailInvalid = { 
+      field: 'email', 
+      message: 'E-mail e/ou senha inválidos' 
+    }
+    const passwordInvalid = { 
+      field: 'password', 
+      message: 'E-mail e/ou senha inválidos' 
+    }
 
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) {
+      errs.push(emailInvalid, passwordInvalid);
+      throw new AppError(errs);
+    }
     const passwordIsValid = await bcrypt.compare(password, user.password);
-    if (!passwordIsValid) throw new AppError('E-mail e/ou senha inválidos');
+    if (!passwordIsValid) {
+      errs.push(emailInvalid, passwordInvalid);
+      throw new AppError(errs);
+    }
 
     user.password = undefined;
 
-    return res.json(user);
+    const token = this.generateToken(user.id, 84600);
+    return res.json({ user, token });
   }
 }
 
