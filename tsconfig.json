@@ -24,7 +24,7 @@
       "@routes/*": ["./src/routes/*"],
       "@database/*": ["./src/database/*"],
       "@errors/*": ["./src/errors/*"],
-      "@middlewares/*": ["./src/middlewares/*"],
+      "@middlewares/*": ["./src/middlewares/*"]
     }
   }
 }
