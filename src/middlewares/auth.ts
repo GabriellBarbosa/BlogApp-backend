@@ -23,7 +23,6 @@ const handleAuth = async (req: Request, res: Response, next: NextFunction) => {
     req.userId = decoded.id;
     return next();
   });
-
 }
 
 export { handleAuth };

@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import { User } from "@models/User";
 import { AppError } from "@errors/AppError";
+import { transporter } from "src/modules/mailer";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 class AuthController {
   private generateToken = (userId: string, expiresSeconds: number) => {
@@ -87,6 +89,97 @@ class AuthController {
 
     const token = this.generateToken(user.id, 84600);
     return res.json({ user, token });
+  }
+
+  lostPassword = async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    if (!String(email).trim() || email === undefined)
+      throw new AppError('Informe seu email');
+
+    const user = await User.findOne({ email });
+
+    if (!user)
+      throw new AppError('Email não cadastrado');
+
+    // @desc RecoverPasswordToken expires in one hour
+    const passwordResetToken = crypto.randomBytes(10).toString('hex');
+    const passwordResetExpires = new Date()
+    passwordResetExpires.setHours(passwordResetExpires.getHours() + 1);
+    
+    await User.findByIdAndUpdate(user.id, {
+      '$set': { passwordResetToken, passwordResetExpires }
+    }).exec();
+
+    await transporter.sendMail({
+      to: email,
+      from: 'gabriel.bloapp@gmail.com',
+      subject: 'Recuperação de senha',
+      html: `
+        <p style="font-family: sans-serif">
+          Use essa chave para recuperar sua senha: <strong>${passwordResetToken}</strong>
+        </p>
+      `
+    });
+
+    return res.json({ message: 'Enviamos uma chave secreta para o seu email' });
+  }
+
+  recoverPassword = async (req: Request, res: Response) => {
+    const { token, email, password } = req.body;
+    let errs = [];
+
+    if (!String(token).trim() || token === undefined)
+      errs.push({ field: 'token', message: 'Campo obrigatório' });
+    if (!String(email).trim() || email === undefined)
+      errs.push({ field: 'email', message: 'Campo obrigatório' });
+    if (!String(password).trim() || password === undefined)
+      errs.push({ field: 'password', message: 'Campo obrigatório' });
+    if (errs.length) throw new AppError(errs);
+
+    const user = await User.findOne({ email })
+      .select('+passwordResetToken passwordResetExpires password');
+
+    const tokenInvalid = { 
+      field: 'token', 
+      message: 'Chave secreta e/ou email inválidos'
+    };
+    const emailInvalid = { 
+      field: 'email', 
+      message: 'Chave secreta e/ou email inválidos'
+    };
+
+    if (!user) {
+      errs.push(emailInvalid, tokenInvalid);
+      throw new AppError(errs);
+    }
+    if (token !== user.passwordResetToken) {
+      errs.push(emailInvalid, tokenInvalid);
+      throw new AppError(errs);
+    }
+    if (new Date() > user.passwordResetExpires)
+      throw new AppError([{ 
+        field: 'token', 
+        message: 'Essa chave expirou, faça outra requisição'
+      }], 401);
+
+    // Hash password and saves it
+    const saltRounds = 10;
+    bcrypt.genSalt(saltRounds, (err, salt) => {
+      if (err) throw new Error(err.message);
+      bcrypt.hash(password, salt, async (err, hash) => {
+        if (err) throw new Error(err.message);
+
+        const userRecovered = await User.findByIdAndUpdate(user.id, {
+          '$set': {
+            password: hash
+          }
+        }).exec();
+
+        const token = this.generateToken(user.id, 86400);
+        return res.json({ user: userRecovered, token });
+      });
+    });
   }
 }
 
