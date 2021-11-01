@@ -10,4 +10,10 @@ routes.post('/register', authController.createAccount);
 // @desc Handles users login
 routes.post('/authenticate', authController.authenticate);
 
+// @desc Sends a email with a token to recover the password
+routes.post('/lost-password', authController.lostPassword);
+
+// @desc Changes user password
+routes.post('/recover-password', authController.recoverPassword);
+
 export { routes };

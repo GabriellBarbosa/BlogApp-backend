@@ -5,6 +5,8 @@ interface User {
   userName: string;
   isAdmin: number;
   password: string;
+  passwordResetToken: string,
+  passwordResetExpires: Date,
   updatedAt: Date;
   createdAt: Date;
 }
@@ -31,6 +33,14 @@ const schema = new Schema<User>({
     required: true,
     select: false,
     trim: true
+  },
+  passwordResetToken: {
+    type: String,
+    select: false
+  },
+  passwordResetExpires: {
+    type: Date,
+    select: false
   }
 }, { timestamps: true });
 
