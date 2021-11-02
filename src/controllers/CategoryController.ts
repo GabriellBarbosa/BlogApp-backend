@@ -49,7 +49,7 @@ class CategoryController {
 
   delete = async (req: Request, res: Response) => {
     const { id } = req.params;
-    await Category.remove({ _id: id }).exec();
+    await Category.deleteOne({ _id: id }).exec();
 
     return res.json({ message: 'Categoria removida' });
   }
