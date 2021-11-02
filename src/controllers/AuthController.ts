@@ -7,11 +7,10 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 class AuthController {
-  private generateToken = (userId: string, expiresSeconds: number) => {
+  private generateToken = (userId: string, expiresSeconds = 86400) => {
     const token = jwt.sign({ id: userId }, process.env.SECRET_KEY, {
       expiresIn: expiresSeconds
     });
-    
     return token;
   }
 
@@ -38,21 +37,11 @@ class AuthController {
     
     const newUser = new User({ email, userName, isAdmin, password });
     
-    // hash password and saves the user
-    const saltRounds = 10;
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-      if (err) throw new Error(err.message);
-      bcrypt.hash(newUser.password, salt, async (err, hash) => {
-        if (err) throw new Error(err.message);
+    const user = await newUser.save();
+    const token = this.generateToken(user.id);
+    user.password = undefined;
 
-        newUser.password = hash;
-        const user = await newUser.save();
-        user.password = undefined;
-
-        const token = this.generateToken(user.id, 86400);
-        return res.json({ user, token });
-      });
-    });
+    return res.json({ user, token });
   }
 
   authenticate = async (req: Request, res: Response) => {
@@ -87,7 +76,7 @@ class AuthController {
 
     user.password = undefined;
 
-    const token = this.generateToken(user.id, 84600);
+    const token = this.generateToken(user.id);
     return res.json({ user, token });
   }
 
@@ -163,23 +152,45 @@ class AuthController {
         message: 'Essa chave expirou, faça outra requisição'
       }], 401);
 
-    // Hash password and saves it
-    const saltRounds = 10;
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-      if (err) throw new Error(err.message);
-      bcrypt.hash(password, salt, async (err, hash) => {
-        if (err) throw new Error(err.message);
+    // @desc Saves the new password
+    const userRecovered = await User.findOne({ _id: user.id });
+    userRecovered.password = password;
+    await userRecovered.save();
+    userRecovered.password = undefined;
 
-        const userRecovered = await User.findByIdAndUpdate(user.id, {
-          '$set': {
-            password: hash
-          }
-        }).exec();
+    const authToken = this.generateToken(user.id);
+    return res.json({ user: userRecovered, token: authToken });
+  }
 
-        const token = this.generateToken(user.id, 86400);
-        return res.json({ user: userRecovered, token });
-      });
-    });
+  edit = async (req: Request, res: Response) => {
+    const { userName, password, email } = req.body;
+    let edits = 0;
+
+    if (!req.userId)
+      throw new AppError('Não autorizado', 401);
+    if (!userName && !password && !email)
+      throw new AppError('Impossível atualizar');
+    
+    const user = await User.findOne({ _id: req.userId }).select('+password');
+
+    if (String(userName).trim() && userName !== undefined) {
+      user.userName = userName;
+      edits += 1;
+    }
+    if (String(email).trim() && email !== undefined) {
+      user.email = email;
+      edits += 1;
+    }
+    if (String(password).trim() && password !== undefined) {
+      user.password = password;
+      edits += 1;
+    }
+    if (!edits) throw new AppError('Impossível atualizar');
+
+    user.updatedAt = new Date();
+    await user.save();
+
+    return res.json(user);
   }
 }
 
