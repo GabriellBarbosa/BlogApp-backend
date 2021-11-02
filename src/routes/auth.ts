@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "@controllers/AuthController";
+import { handleAuth } from "@middlewares/auth";
 
 const routes = Router();
 const authController = new AuthController();
@@ -15,5 +16,10 @@ routes.post('/lost-password', authController.lostPassword);
 
 // @desc Changes user password
 routes.post('/recover-password', authController.recoverPassword);
+
+// @desc Updates user data
+routes
+.use(handleAuth)
+.put('/edit', authController.edit);
 
 export { routes };
