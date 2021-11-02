@@ -62,7 +62,7 @@ class PostController {
 
   delete = async (req: Request, res: Response) => {
     const { id } = req.params;
-    await Post.remove({ _id: id }).exec();
+    await Post.deleteOne({ _id: id }).exec();
 
     return res.json({ message: 'Postagem removida' });
   }
