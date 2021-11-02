@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 class AuthController {
+
   private generateToken = (userId: string, expiresSeconds = 86400) => {
     const token = jwt.sign({ id: userId }, process.env.SECRET_KEY, {
       expiresIn: expiresSeconds
@@ -14,7 +15,7 @@ class AuthController {
     return token;
   }
 
-  createAccount = async(req: Request, res: Response) => {
+  createAccount = async (req: Request, res: Response) => {
     const { email, userName, isAdmin, password } = req.body;
     let errs = [];
 
@@ -191,6 +192,25 @@ class AuthController {
     await user.save();
 
     return res.json(user);
+  }
+
+  delete = async (req: Request, res: Response) => {
+    const { password } = req.body;
+
+    if (!req.userId) throw new AppError('Não autorizado', 401);
+
+    if (!String(password).trim() || password === undefined)
+      throw new AppError('Informe a sua senha');
+
+    const user = await User.findOne({ _id: req.userId }).select('+password');
+    if (!user) throw new AppError('Usuário não encontrado');
+
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid) throw new AppError('Senha incorreta');
+
+    await User.deleteOne({ _id: user.id }).exec();
+
+    return res.json({ message: 'Usuário removido' });
   }
 }
 
