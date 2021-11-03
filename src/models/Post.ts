@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 
 interface Post {
+  author: Schema.Types.ObjectId;
   content: string;
   slug: string;
   category: Schema.Types.ObjectId;
@@ -9,6 +10,11 @@ interface Post {
 }
 
 const schema = new Schema<Post>({
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+    required: true
+  },
   content: { 
     type: String, 
     required: true, 

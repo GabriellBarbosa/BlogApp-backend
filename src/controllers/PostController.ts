@@ -2,9 +2,23 @@ import { Post } from "@models/Post";
 import { Category } from "@models/Category";
 import { Request, Response } from "express";
 import { AppError } from '@errors/AppError';
+import { User } from '@models/User';
 
 class PostController {
+
+  listAll = async (req: Request, res: Response) => {
+    const posts = await Post
+      .find()
+      .populate('category author')
+      .sort({ createdAt: 'desc' });
+    
+    return res.json(posts);
+  }
+
   add = async (req: Request, res: Response) => {
+    if(!req.userId)
+      throw new AppError('Não autorizado', 401);
+
     const { content, slug, category } = req.body;
     let errs = [];
 
@@ -20,28 +34,26 @@ class PostController {
     const categoryExists = await Category.findOne({ _id: category }).exec();
     if (!categoryExists) throw new AppError('Categoria inválida');
 
-    const newPost = new Post({ content, slug, category });
+    const newPost = new Post({ author: req.userId, content, slug, category });
     const post = await newPost.save();
     
     return res.json(post);
   }
 
-  listAll = async (req: Request, res: Response) => {
-    const posts = await Post
-      .find()
-      .populate('category')
-      .sort({ createdAt: 'desc' });
-    
-    return res.json(posts);
-  }
-
   edit = async (req: Request, res: Response) => {
+    if(!req.userId)
+      throw new AppError('Não autorizado', 401);
+
     const { id } = req.params;
     const { content, slug, category } = req.body;
+
     const post = await Post.findOne({ _id: id }).exec();
+    const user = await User.findOne({ _id: post.author }).exec();
 
     if (!post)
       throw new AppError('Postagem não encontrada', 404);
+    if (req.userId !== user.id)
+      throw new AppError('Não autorizado', 401);
     if (!content && !slug && !category)
       throw new AppError('Impossível atualizar');
     if (content)
@@ -61,7 +73,17 @@ class PostController {
   }
 
   delete = async (req: Request, res: Response) => {
+    if(!req.userId)
+      throw new AppError('Não autorizado', 401);
+
     const { id } = req.params;
+
+    const post = await Post.findOne({ _id: id }).exec()
+    const user = await User.findOne({ id: post.author }).exec();
+
+    if (req.userId !== user.id)
+      throw new AppError('Não autorizado', 401);
+
     await Post.deleteOne({ _id: id }).exec();
 
     return res.json({ message: 'Postagem removida' });
