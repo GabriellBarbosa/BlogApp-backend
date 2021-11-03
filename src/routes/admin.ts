@@ -1,5 +1,6 @@
-import { Router } from "express";
-import { CategoryController } from "@controllers/CategoryController";
+import { Router } from 'express';
+import { CategoryController } from '@controllers/CategoryController';
+import { handleAuth } from '@middlewares/auth';
 
 const routes = Router();
 const categoryController = new CategoryController();
@@ -7,13 +8,19 @@ const categoryController = new CategoryController();
 // @desc Returns all categories
 routes.get('/categories/', categoryController.listAll);
 
-// @desc Saves a new category in MONGODB
-routes.post('/categories/add', categoryController.add);
+// @desc Saves a new category in MONGODB. protected route
+routes
+.use(handleAuth)
+.post('/categories/add', categoryController.add);
 
-// @desc Edits a category
-routes.put('/categories/edit/:id', categoryController.edit);
+// @desc Edits a category. protected route
+routes
+.use(handleAuth)
+.put('/categories/edit/:id', categoryController.edit);
 
-// @desc Deletes a category
-routes.delete('/categories/delete/:id', categoryController.delete);
+// @desc Deletes a category. protected route
+routes
+  .use(handleAuth)
+  .delete('/categories/delete/:id', categoryController.delete);
 
 export { routes };
