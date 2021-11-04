@@ -48,10 +48,12 @@ class PostController {
     const { content, slug, category } = req.body;
 
     const post = await Post.findOne({ _id: id }).exec();
-    const user = await User.findOne({ _id: post.author }).exec();
 
     if (!post)
       throw new AppError('Postagem não encontrada', 404);
+
+    const user = await User.findOne({ _id: post.author }).exec();
+
     if (req.userId !== user.id)
       throw new AppError('Não autorizado', 401);
     if (!content && !slug && !category)
@@ -79,6 +81,10 @@ class PostController {
     const { id } = req.params;
 
     const post = await Post.findOne({ _id: id }).exec()
+
+    if (!post)
+      throw new AppError('Postagem não encontrada', 404);
+
     const user = await User.findOne({ id: post.author }).exec();
 
     if (req.userId !== user.id)
