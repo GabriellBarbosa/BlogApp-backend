@@ -5,6 +5,9 @@ import { handleAuth } from '@middlewares/auth';
 const routes = Router();
 const commentController = new CommentController();
 
+// @desc List post comments by postId
+routes.get('/list/:id', commentController.listByPost);
+
 // @desc Adds a new comment to a post. protected route
 routes
 .use(handleAuth)
