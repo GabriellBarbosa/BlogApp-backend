@@ -69,10 +69,12 @@ class CommentController {
       throw new AppError('Impossível atualizar');
     
     const editComment = await Comment.findOne({ _id: id }).exec();
-    const commentAuthor = await User.findOne({ _id: editComment.author }).exec();
 
     if (!editComment)
       throw new AppError('Comentário não encontrado');
+
+    const commentAuthor = await User.findOne({ _id: editComment.author }).exec();
+
     if (req.userId !== commentAuthor.id)
       throw new AppError('Não autorizado', 401);
 
@@ -81,6 +83,30 @@ class CommentController {
     await editComment.save();
 
     return res.json(editComment);
+  }
+
+  delete = async (req: Request, res: Response) => {
+    if (!req.userId)
+      throw new AppError('Não autorizado', 401);
+
+    const id = req.params.id;
+
+    if (!isValidObjectId(id))
+      throw new AppError('Comment ID inválido');
+  
+    const deleteComment = await Comment.findOne({ _id: id }).exec();
+
+    if (!deleteComment)
+      throw new AppError('Comentário não encontrado');
+
+    const commentAuthor = await User.findOne({ _id: deleteComment.author }).exec();
+
+    if (req.userId !== commentAuthor.id)
+      throw new AppError('Não autorizado', 401);
+
+    await Comment.deleteOne({ id: deleteComment.id }).exec();
+
+    res.json({ message: 'Comentário removido' });
   }
 }
 
