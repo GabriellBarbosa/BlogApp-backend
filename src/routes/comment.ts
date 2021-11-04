@@ -18,4 +18,9 @@ routes
 .use(handleAuth)
 .put('/edit/:id', commentController.edit);
 
+// @desc Deletes a comment. protected route
+routes
+  .use(handleAuth)
+  .delete('/delete/:id', commentController.delete);
+
 export { routes };
