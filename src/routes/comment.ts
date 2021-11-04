@@ -8,9 +8,14 @@ const commentController = new CommentController();
 // @desc List post comments by postId
 routes.get('/list/:id', commentController.listByPost);
 
-// @desc Adds a new comment to a post. protected route
+// @desc Adds a new comment based on postId protected route
 routes
 .use(handleAuth)
 .post('/add/:id', commentController.add);
+
+// @desc Edits the comment. protected route
+routes
+.use(handleAuth)
+.put('/edit/:id', commentController.edit);
 
 export { routes };

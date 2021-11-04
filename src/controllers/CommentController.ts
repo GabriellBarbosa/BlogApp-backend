@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Comment } from '@models/Comment';
 import { Post } from '@models/Post';
+import { User } from '@models/User';
 import { AppError } from '@errors/AppError';
 import { isValidObjectId } from 'mongoose';
 
@@ -17,7 +18,9 @@ class CommentController {
     if (!post)
       throw new AppError('Postagem não encontrada', 404);
 
-    const comments = await Comment.find({ post: post.id }).exec();
+    const comments = await Comment.find({ post: post.id })
+      .populate('author')
+      .sort({ createdAt: 'desc' });
 
     return res.json(comments);
   }
@@ -51,6 +54,33 @@ class CommentController {
     await newComment.save();
 
     return res.json(newComment);
+  }
+
+  edit = async (req: Request, res: Response) => {
+    if (!req.userId)
+      throw new AppError('Não autorizado', 401);
+
+    const id = req.params.id;
+    const { comment } = req.body;
+
+    if (!isValidObjectId(id))
+      throw new AppError('Comment ID inválido');
+    if (!String(comment).trim() || comment === undefined)
+      throw new AppError('Impossível atualizar');
+    
+    const editComment = await Comment.findOne({ _id: id }).exec();
+    const commentAuthor = await User.findOne({ _id: editComment.author }).exec();
+
+    if (!editComment)
+      throw new AppError('Comentário não encontrado');
+    if (req.userId !== commentAuthor.id)
+      throw new AppError('Não autorizado', 401);
+
+    editComment.comment = comment;
+    editComment.updatedAt = new Date();
+    await editComment.save();
+
+    return res.json(editComment);
   }
 }
 
