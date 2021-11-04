@@ -5,6 +5,22 @@ import { AppError } from '@errors/AppError';
 import { isValidObjectId } from 'mongoose';
 
 class CommentController {
+
+  listByPost = async (req: Request, res: Response) => {
+    const postId = req.params.id;
+
+    if(!isValidObjectId(postId))
+      throw new AppError('Post ID inválido');
+    
+    const post = await Post.findOne({ _id: postId }).exec()
+
+    if (!post)
+      throw new AppError('Postagem não encontrada', 404);
+
+    const comments = await Comment.find({ post: post.id }).exec();
+
+    return res.json(comments);
+  }
   
   add = async (req: Request, res: Response) => {
     if (!req.userId)
