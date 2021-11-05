@@ -1,7 +1,7 @@
-import { Schema, model } from 'mongoose';
-import bcrypt from 'bcrypt';
+import { Schema, model } from 'mongoose'
+import bcrypt from 'bcrypt'
 
-interface User {
+interface UserProps {
   email: string;
   userName: string;
   isAdmin: number;
@@ -12,12 +12,12 @@ interface User {
   createdAt: Date;
 }
 
-const schema = new Schema<User>({
-  email: { 
+const schema = new Schema<UserProps>({
+  email: {
     type: String,
     unique: true,
     required: true,
-    trim: true 
+    trim: true
   },
   userName: {
     type: String,
@@ -43,15 +43,15 @@ const schema = new Schema<User>({
     type: Date,
     select: false
   }
-}, { timestamps: true });
+}, { timestamps: true })
 
-schema.pre('save', async function save(next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  return next();
-});
+schema.pre('save', async function save (next) {
+  if (!this.isModified('password')) return next()
+  const salt = await bcrypt.genSalt(10)
+  this.password = await bcrypt.hash(this.password, salt)
+  return next()
+})
 
-const User = model('users', schema);
+const User = model('users', schema)
 
-export { User };
+export { User }

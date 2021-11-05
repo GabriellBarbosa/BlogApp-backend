@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose'
 
-interface Comment {
+interface CommentProps {
   author: Schema.Types.ObjectId;
   post: Schema.Types.ObjectId;
   comment: string;
@@ -8,7 +8,7 @@ interface Comment {
   createdAt: Date;
 }
 
-const schema = new Schema<Comment>({
+const schema = new Schema<CommentProps>({
   author: {
     type: Schema.Types.ObjectId,
     ref: 'users',
@@ -24,8 +24,8 @@ const schema = new Schema<Comment>({
     required: true,
     trim: true
   }
-}, { timestamps: true });
+}, { timestamps: true })
 
-const Comment = model('comments', schema);
+const Comment = model('comments', schema)
 
-export { Comment };
+export { Comment }

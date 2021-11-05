@@ -1,6 +1,6 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose'
 
-interface Post {
+interface PostProps {
   author: Schema.Types.ObjectId;
   content: string;
   slug: string;
@@ -9,29 +9,29 @@ interface Post {
   createdAt: Date;
 }
 
-const schema = new Schema<Post>({
+const schema = new Schema<PostProps>({
   author: {
     type: Schema.Types.ObjectId,
     ref: 'users',
     required: true
   },
-  content: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  content: {
+    type: String,
+    required: true,
+    trim: true
   },
-  slug: { 
-    type: String, 
-    required: true, 
-    trim: true 
+  slug: {
+    type: String,
+    required: true,
+    trim: true
   },
-  category: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'categories', 
-    required: true 
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'categories',
+    required: true
   }
-}, { timestamps: true });
+}, { timestamps: true })
 
-const Post = model('posts', schema);
+const Post = model('posts', schema)
 
-export { Post };
+export { Post }
