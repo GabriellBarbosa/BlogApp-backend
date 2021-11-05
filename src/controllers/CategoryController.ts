@@ -17,7 +17,9 @@ class CategoryController {
 
     const user = await User.findOne({ _id: req.userId }).exec()
 
-    if (!user || user.isAdmin !== 1) { throw new AppError('Não autorizado', 401) }
+    if (!user || user.isAdmin !== 1) {
+      throw new AppError('Não autorizado', 401)
+    }
 
     const errs = []
     const { name, slug } = req.body
@@ -28,7 +30,9 @@ class CategoryController {
     if (!String(slug).trim() || slug === undefined) {
       errs.push({ field: 'slug', message: 'Campo obrigatório' })
     }
-    if (errs.length) { throw new AppError(errs) }
+    if (errs.length) {
+      throw new AppError(errs)
+    }
 
     const newCategory = await new Category({ name, slug }).save()
     return res.json(newCategory)
@@ -49,8 +53,12 @@ class CategoryController {
 
     const category = await Category.findOne({ _id: id }).exec()
 
-    if (!category) { throw new AppError('Categoria não encontrada', 404) }
-    if (!name && !slug) { throw new AppError('Impossível atualizar') }
+    if (!category) {
+      throw new AppError('Categoria não encontrada', 404)
+    }
+    if (!name && !slug) {
+      throw new AppError('Impossível atualizar')
+    }
 
     if (String(name).trim() && name !== undefined) {
       category.name = name

@@ -6,8 +6,7 @@ import { User } from '@models/User'
 
 class PostController {
   listAll = async (req: Request, res: Response) => {
-    const posts = await Post
-      .find()
+    const posts = await Post.find()
       .populate('category author')
       .sort({ createdAt: 'desc' })
 
@@ -15,7 +14,9 @@ class PostController {
   }
 
   add = async (req: Request, res: Response) => {
-    if (!req.userId) { throw new AppError('Não autorizado', 401) }
+    if (!req.userId) {
+      throw new AppError('Não autorizado', 401)
+    }
 
     const { content, slug, category } = req.body
     const errs = []
@@ -29,7 +30,9 @@ class PostController {
     if (!String(category).trim() || category === undefined) {
       errs.push({ field: 'category', message: 'Campo obrigatório' })
     }
-    if (errs.length) { throw new AppError(errs) }
+    if (errs.length) {
+      throw new AppError(errs)
+    }
 
     const categoryExists = await Category.findOne({ _id: category }).exec()
     if (!categoryExists) throw new AppError('Categoria inválida')
@@ -41,21 +44,33 @@ class PostController {
   }
 
   edit = async (req: Request, res: Response) => {
-    if (!req.userId) { throw new AppError('Não autorizado', 401) }
+    if (!req.userId) {
+      throw new AppError('Não autorizado', 401)
+    }
 
     const { id } = req.params
     const { content, slug, category } = req.body
 
     const post = await Post.findOne({ _id: id }).exec()
 
-    if (!post) { throw new AppError('Postagem não encontrada', 404) }
+    if (!post) {
+      throw new AppError('Postagem não encontrada', 404)
+    }
 
     const user = await User.findOne({ _id: post.author }).exec()
 
-    if (req.userId !== user.id) { throw new AppError('Não autorizado', 401) }
-    if (!content && !slug && !category) { throw new AppError('Impossível atualizar') }
-    if (content) { post.content = content }
-    if (slug) { post.slug = slug }
+    if (req.userId !== user.id) {
+      throw new AppError('Não autorizado', 401)
+    }
+    if (!content && !slug && !category) {
+      throw new AppError('Impossível atualizar')
+    }
+    if (content) {
+      post.content = content
+    }
+    if (slug) {
+      post.slug = slug
+    }
     if (category) {
       const categoryExists = await Category.findOne({ _id: category }).exec()
       if (!categoryExists) throw new AppError('Categoria inválida')
@@ -69,14 +84,20 @@ class PostController {
   }
 
   delete = async (req: Request, res: Response) => {
-    if (!req.userId) { throw new AppError('Não autorizado', 401) }
+    if (!req.userId) {
+      throw new AppError('Não autorizado', 401)
+    }
     const { id } = req.params
 
     const post = await Post.findOne({ _id: id }).exec()
-    if (!post) { throw new AppError('Postagem não encontrada', 404) }
+    if (!post) {
+      throw new AppError('Postagem não encontrada', 404)
+    }
 
     const user = await User.findOne({ id: post.author }).exec()
-    if (req.userId !== user.id) { throw new AppError('Não autorizado', 401) }
+    if (req.userId !== user.id) {
+      throw new AppError('Não autorizado', 401)
+    }
 
     await Post.deleteOne({ _id: id }).exec()
     return res.json({ message: 'Postagem removida' })

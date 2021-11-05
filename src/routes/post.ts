@@ -9,18 +9,12 @@ const postController = new PostController()
 routes.get('/', postController.listAll)
 
 // @desc Saves a new post. protected route
-routes
-  .use(handleAuth)
-  .post('/add', postController.add)
+routes.use(handleAuth).post('/add', postController.add)
 
 // @desc Updates a post. protected route
-routes
-  .use(handleAuth)
-  .put('/edit/:id', postController.edit)
+routes.use(handleAuth).put('/edit/:id', postController.edit)
 
 // @desc Deletes a post. protected route
-routes
-  .use(handleAuth)
-  .delete('/delete/:id', postController.delete)
+routes.use(handleAuth).delete('/delete/:id', postController.delete)
 
 export { routes }

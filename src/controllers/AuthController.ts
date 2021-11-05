@@ -33,7 +33,10 @@ class AuthController {
     const userNameExists = await User.findOne({ userName }).exec()
 
     if (emailExists) {
-      errs.push({ field: 'email', message: 'Esse email já está sendo utilizado' })
+      errs.push({
+        field: 'email',
+        message: 'Esse email já está sendo utilizado'
+      })
     }
     if (userNameExists) {
       errs.push({
@@ -99,7 +102,9 @@ class AuthController {
 
     const user = await User.findOne({ email })
 
-    if (!user) { throw new AppError('Email não cadastrado') }
+    if (!user) {
+      throw new AppError('Email não cadastrado')
+    }
 
     // @desc RecoverPasswordToken expires in one hour
     const passwordResetToken = crypto.randomBytes(10).toString('hex')
@@ -139,8 +144,9 @@ class AuthController {
     }
     if (errs.length) throw new AppError(errs)
 
-    const user = await User.findOne({ email })
-      .select('+passwordResetToken passwordResetExpires password')
+    const user = await User.findOne({ email }).select(
+      '+passwordResetToken passwordResetExpires password'
+    )
 
     const tokenInvalid = {
       field: 'token',
@@ -160,10 +166,15 @@ class AuthController {
       throw new AppError(errs)
     }
     if (new Date() > user.passwordResetExpires) {
-      throw new AppError([{
-        field: 'token',
-        message: 'Essa chave expirou, faça outra requisição'
-      }], 401)
+      throw new AppError(
+        [
+          {
+            field: 'token',
+            message: 'Essa chave expirou, faça outra requisição'
+          }
+        ],
+        401
+      )
     }
 
     // @desc Saves the new password
@@ -180,7 +191,9 @@ class AuthController {
     const { userName, password, email } = req.body
     let edits = 0
 
-    if (!req.userId) { throw new AppError('Não autorizado', 401) }
+    if (!req.userId) {
+      throw new AppError('Não autorizado', 401)
+    }
     if (!userName && !password && !email) {
       throw new AppError('Impossível atualizar')
     }

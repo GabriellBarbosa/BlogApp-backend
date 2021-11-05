@@ -9,18 +9,12 @@ const commentController = new CommentController()
 routes.get('/list/:id', commentController.listByPost)
 
 // @desc Adds a new comment based on postId protected route
-routes
-  .use(handleAuth)
-  .post('/add/:id', commentController.add)
+routes.use(handleAuth).post('/add/:id', commentController.add)
 
 // @desc Edits the comment. protected route
-routes
-  .use(handleAuth)
-  .put('/edit/:id', commentController.edit)
+routes.use(handleAuth).put('/edit/:id', commentController.edit)
 
 // @desc Deletes a comment. protected route
-routes
-  .use(handleAuth)
-  .delete('/delete/:id', commentController.delete)
+routes.use(handleAuth).delete('/delete/:id', commentController.delete)
 
 export { routes }

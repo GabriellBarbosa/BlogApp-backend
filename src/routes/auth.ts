@@ -18,13 +18,9 @@ routes.post('/lost-password', authController.lostPassword)
 routes.post('/recover-password', authController.recoverPassword)
 
 // @desc Updates user data. Protected route
-routes
-  .use(handleAuth)
-  .put('/edit', authController.edit)
+routes.use(handleAuth).put('/edit', authController.edit)
 
 // @desc Deletes an user. Protected route
-routes
-  .use(handleAuth)
-  .delete('/delete', authController.delete)
+routes.use(handleAuth).delete('/delete', authController.delete)
 
 export { routes }

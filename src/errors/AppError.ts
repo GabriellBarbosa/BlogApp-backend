@@ -1,8 +1,11 @@
 class AppError {
-  public readonly message: string | Object[];
-  public readonly statusCode: number;
+  public readonly message: string | Array<{ field: string; message: string }>
+  public readonly statusCode: number
 
-  constructor (message: string | Object[], statusCode = 400) {
+  constructor(
+    message: string | Array<{ field: string; message: string }>,
+    statusCode = 400
+  ) {
     this.message = message
     this.statusCode = statusCode
   }
