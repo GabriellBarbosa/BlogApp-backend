@@ -1,26 +1,26 @@
-import { Router } from 'express';
-import { PostController } from '@controllers/PostController';
-import { handleAuth } from '@middlewares/auth';
+import { Router } from 'express'
+import { PostController } from '@controllers/PostController'
+import { handleAuth } from '@middlewares/auth'
 
-const routes = Router();
-const postController = new PostController();
+const routes = Router()
+const postController = new PostController()
 
 // @desc Returns all posts
-routes.get('/', postController.listAll);
+routes.get('/', postController.listAll)
 
 // @desc Saves a new post. protected route
 routes
-.use(handleAuth)
-.post('/add', postController.add);
+  .use(handleAuth)
+  .post('/add', postController.add)
 
 // @desc Updates a post. protected route
 routes
   .use(handleAuth)
-  .put('/edit/:id', postController.edit);
+  .put('/edit/:id', postController.edit)
 
 // @desc Deletes a post. protected route
 routes
   .use(handleAuth)
-  .delete('/delete/:id', postController.delete);
+  .delete('/delete/:id', postController.delete)
 
-export { routes };
+export { routes }
