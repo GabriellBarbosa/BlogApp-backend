@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-interface PostProps {
+interface Props {
   author: Schema.Types.ObjectId
   content: string
   slug: string
@@ -9,7 +9,7 @@ interface PostProps {
   createdAt: Date
 }
 
-const schema = new Schema<PostProps>(
+const schema = new Schema<Props>(
   {
     author: {
       type: Schema.Types.ObjectId,

@@ -1,13 +1,13 @@
 import { model, Schema } from 'mongoose'
 
-interface CategoryProps {
+interface Props {
   name: string
   slug: string
   updatedAt: Date
   createdAt: Date
 }
 
-const schema = new Schema<CategoryProps>(
+const schema = new Schema<Props>(
   {
     name: {
       type: String,

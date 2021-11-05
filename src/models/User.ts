@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import bcrypt from 'bcrypt'
 
-interface UserProps {
+interface Props {
   email: string
   userName: string
   isAdmin: number
@@ -12,7 +12,7 @@ interface UserProps {
   createdAt: Date
 }
 
-const schema = new Schema<UserProps>(
+const schema = new Schema<Props>(
   {
     email: {
       type: String,

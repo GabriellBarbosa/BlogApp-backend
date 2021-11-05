@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 
-interface CommentProps {
+interface Props {
   author: Schema.Types.ObjectId
   post: Schema.Types.ObjectId
   comment: string
@@ -8,7 +8,7 @@ interface CommentProps {
   createdAt: Date
 }
 
-const schema = new Schema<CommentProps>(
+const schema = new Schema<Props>(
   {
     author: {
       type: Schema.Types.ObjectId,
