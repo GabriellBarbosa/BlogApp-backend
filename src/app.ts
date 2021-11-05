@@ -1,6 +1,7 @@
 import express from 'express'
 import 'express-async-errors'
 import env from 'dotenv'
+import cors from 'cors'
 import { createConnection } from '@database/index'
 import { routes as admin } from '@routes/admin'
 import { routes as post } from '@routes/post'
@@ -13,6 +14,7 @@ createConnection()
 const app = express()
 
 // @desc Express config
+app.use(cors())
 app.use(express.json())
 
 // @desc Routes
