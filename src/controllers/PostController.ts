@@ -37,7 +37,10 @@ class PostController {
     const categoryExists = await Category.findOne({ _id: category }).exec()
     if (!categoryExists) throw new AppError('Categoria inválida')
 
-    const newPost = new Post({ author: req.userId, content, slug, category })
+    const userExists = await User.findOne({ _id: req.userId }).exec()
+    if (!userExists) throw new AppError('Usuário inválido')
+
+    const newPost = new Post({ author: userExists.id, content, slug, category })
     const post = await newPost.save()
 
     return res.json(post)
