@@ -14,8 +14,7 @@ createConnection()
 const app = express()
 
 // @desc Express config
-app.use(cors())
-app.use(express.json())
+app.use(express.json(), cors())
 
 // @desc Routes
 app.use('/admin', admin)

@@ -100,7 +100,7 @@ class AuthController {
       throw new AppError('Informe seu email')
     }
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email }).exec()
 
     if (!user) {
       throw new AppError('Email não cadastrado')
