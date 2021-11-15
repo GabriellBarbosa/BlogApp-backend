@@ -5,6 +5,7 @@ import { transporter } from 'src/modules/mailer'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import crypto from 'crypto'
+import { isValidObjectId } from 'mongoose'
 
 class AuthController {
   private generateToken = (userId: string, expiresSeconds = 86400) => {
@@ -91,6 +92,17 @@ class AuthController {
 
     const token = this.generateToken(user.id)
     return res.json({ user, token })
+  }
+
+  autoLogin = async (req: Request, res: Response) => {
+    const id = req.userId
+
+    if (!isValidObjectId(id)) throw new AppError('ID de usuário inválido')
+
+    const user = await User.findOne({ _id: id }).exec()
+    if (!user) throw new AppError('Usuário inválido')
+
+    return res.json({ user })
   }
 
   lostPassword = async (req: Request, res: Response) => {
