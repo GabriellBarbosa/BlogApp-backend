@@ -18,14 +18,11 @@ class PostController {
       throw new AppError('Não autorizado', 401)
     }
 
-    const { content, slug, category } = req.body
+    const { content, category } = req.body
     const errs = []
 
     if (!String(content).trim() || content === undefined) {
       errs.push({ field: 'content', message: 'Campo obrigatório' })
-    }
-    if (!String(slug).trim() || slug === undefined) {
-      errs.push({ field: 'slug', message: 'Campo obrigatório' })
     }
     if (!String(category).trim() || category === undefined) {
       errs.push({ field: 'category', message: 'Campo obrigatório' })
@@ -40,7 +37,7 @@ class PostController {
     const userExists = await User.findOne({ _id: req.userId }).exec()
     if (!userExists) throw new AppError('Usuário inválido')
 
-    const newPost = new Post({ author: userExists.id, content, slug, category })
+    const newPost = new Post({ author: userExists.id, content, category })
     const post = await newPost.save()
 
     return res.json(post)
@@ -52,7 +49,7 @@ class PostController {
     }
 
     const { id } = req.params
-    const { content, slug, category } = req.body
+    const { content, category } = req.body
 
     const post = await Post.findOne({ _id: id }).exec()
 
@@ -65,14 +62,11 @@ class PostController {
     if (req.userId !== user.id) {
       throw new AppError('Não autorizado', 401)
     }
-    if (!content && !slug && !category) {
+    if (!content && !category) {
       throw new AppError('Impossível atualizar')
     }
     if (content) {
       post.content = content
-    }
-    if (slug) {
-      post.slug = slug
     }
     if (category) {
       const categoryExists = await Category.findOne({ _id: category }).exec()

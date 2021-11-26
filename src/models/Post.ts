@@ -3,7 +3,6 @@ import { Schema, model } from 'mongoose'
 interface Props {
   author: Schema.Types.ObjectId
   content: string
-  slug: string
   category: Schema.Types.ObjectId
   updatedAt: Date
   createdAt: Date
@@ -17,11 +16,6 @@ const schema = new Schema<Props>(
       required: true
     },
     content: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    slug: {
       type: String,
       required: true,
       trim: true
