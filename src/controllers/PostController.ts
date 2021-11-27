@@ -16,7 +16,7 @@ class PostController {
 
   getById = async (req: Request, res: Response) => {
     const { id } = req.params
-    if (!id || !isValidObjectId(id)) throw new AppError('Post inválido')
+    if (!isValidObjectId(id)) throw new AppError('Post inválido')
 
     const post = await Post.findOne({ _id: id }).exec()
     if (!post) throw new AppError('Post não encontrado', 404)
