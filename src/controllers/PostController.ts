@@ -3,6 +3,7 @@ import { Category } from '@models/Category'
 import { Request, Response } from 'express'
 import { AppError } from '@errors/AppError'
 import { User } from '@models/User'
+import { isValidObjectId } from 'mongoose'
 
 class PostController {
   listAll = async (req: Request, res: Response) => {
@@ -11,6 +12,16 @@ class PostController {
       .sort({ createdAt: 'desc' })
 
     return res.json(posts)
+  }
+
+  getById = async (req: Request, res: Response) => {
+    const { id } = req.params
+    if (!id || !isValidObjectId(id)) throw new AppError('Post inválido')
+
+    const post = await Post.findOne({ _id: id }).exec()
+    if (!post) throw new AppError('Post não encontrado', 404)
+
+    return res.json(post)
   }
 
   add = async (req: Request, res: Response) => {
@@ -51,6 +62,10 @@ class PostController {
     const { id } = req.params
     const { content, category } = req.body
 
+    if (!isValidObjectId(id)) {
+      throw new AppError('ID inválido')
+    }
+
     const post = await Post.findOne({ _id: id }).exec()
 
     if (!post) {
@@ -85,6 +100,10 @@ class PostController {
       throw new AppError('Não autorizado', 401)
     }
     const { id } = req.params
+
+    if (!isValidObjectId(id)) {
+      throw new AppError('ID inválido')
+    }
 
     const post = await Post.findOne({ _id: id }).exec()
     if (!post) {
