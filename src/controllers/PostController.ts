@@ -24,6 +24,18 @@ class PostController {
     return res.json(post)
   }
 
+  getByCategory = async (req: Request, res: Response) => {
+    const { slug } = req.params
+
+    const category = await Category.findOne({ slug }).exec()
+    if (!category) {
+      throw new AppError('Categoria não encontrada', 404)
+    }
+    const posts = await Post.find({ category: category.id }).exec()
+
+    return res.json({ category, posts })
+  }
+
   add = async (req: Request, res: Response) => {
     if (!req.userId) {
       throw new AppError('Não autorizado', 401)

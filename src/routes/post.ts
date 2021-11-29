@@ -11,6 +11,9 @@ routes.get('/', postController.listAll)
 // @desc Returns the post by id
 routes.get('/:id', postController.getById)
 
+// @desc Returns posts by slug
+routes.get('/category/:slug', postController.getByCategory)
+
 // @desc Saves a new post. protected route
 routes.use(handleAuth).post('/add', postController.add)
 
