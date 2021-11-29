@@ -31,7 +31,9 @@ class PostController {
     if (!category) {
       throw new AppError('Categoria não encontrada', 404)
     }
-    const posts = await Post.find({ category: category.id }).exec()
+    const posts = await Post.find({ category: category.id })
+      .populate('author')
+      .sort({ createdAt: 'desc' })
 
     return res.json({ category, posts })
   }
