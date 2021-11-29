@@ -110,7 +110,11 @@ class PostController {
       throw new AppError('Postagem não encontrada', 404)
     }
 
-    const user = await User.findOne({ id: post.author }).exec()
+    const user = await User.findOne({ _id: post.author }).exec()
+    if (!user) {
+      throw new AppError('Usuário inválido', 404)
+    }
+
     if (req.userId !== user.id) {
       throw new AppError('Não autorizado', 401)
     }
